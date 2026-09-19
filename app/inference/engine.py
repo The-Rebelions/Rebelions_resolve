@@ -74,4 +74,9 @@ class InferenceEngine:
         if "[ Prompt:" in output:
             output = output.split("[ Prompt:", 1)[0]
 
-        return output.strip()
+        output = output.strip()
+
+        if not output:
+            raise InferenceError("Model returned an empty response.")
+
+        return output
