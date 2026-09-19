@@ -1,0 +1,12 @@
+model:
+  path: "models/model.gguf"
+  context_size: 4096
+  temperature: 0.2
+  max_tokens: 256
+
+runtime:
+  gpu_layers: 0
+
+application:
+  name: "Local Code AI"
+  version: "0.1.0"
