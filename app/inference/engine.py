@@ -57,9 +57,14 @@ class InferenceEngine:
             ) from error
 
         except subprocess.CalledProcessError as error:
-            raise InferenceError(
-                f"Model inference failed with exit code {error.returncode}."
-            ) from error        
+            details = error.stderr.strip()
+
+            message = f"Model inference failed with exit code {error.returncode}."
+
+            if details:
+                message += f"\nDetails: {details}"
+
+            raise InferenceError(message) from error     
 
         output = result.stdout
 
