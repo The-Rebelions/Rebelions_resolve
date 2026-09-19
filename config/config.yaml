@@ -10,6 +10,7 @@ runtime:
   backend: "vulkan"
   device: "Vulkan1"
   gpu_layers: "all"
+  executable: "C:/Users/sridevi/AppData/Local/Microsoft/WinGet/Packages/ggml.llamacpp_Microsoft.Winget.Source_8wekyb3d8bbwe/llama.exe"
 
 application:
   name: "Local Code AI"
