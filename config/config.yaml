@@ -7,7 +7,9 @@ model:
   max_tokens: 256
 
 runtime:
-  gpu_layers: 0
+  backend: "vulkan"
+  device: "Vulkan1"
+  gpu_layers: "all"
 
 application:
   name: "Local Code AI"
