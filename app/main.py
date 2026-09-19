@@ -1,5 +1,7 @@
 from app.core.config import load_config
 from app.inference.engine import InferenceEngine
+from app.verification.code import CodeVerifier, VerificationError
+from app.verification.extractor import CodeExtractionError, CodeExtractor
 
 
 def main():
@@ -14,6 +16,9 @@ def main():
         gpu_layers=config["runtime"]["gpu_layers"],
     )
 
+    extractor = CodeExtractor()
+    verifier = CodeVerifier()
+
     print("Local Code AI")
     print("=============")
 
@@ -21,8 +26,19 @@ def main():
 
     response = engine.generate(prompt)
 
-    print("\nAI:")
-    print(response)
+    try:
+        code = extractor.extract_python(response)
+        verifier.verify_python_syntax(code)
+
+        print("\nAI:")
+        print(code)
+        print("\nVerification: PASSED")
+
+    except (CodeExtractionError, VerificationError) as error:
+        print("\nAI:")
+        print(response)
+        print("\nVerification: FAILED")
+        print(error)
 
 
 if __name__ == "__main__":
