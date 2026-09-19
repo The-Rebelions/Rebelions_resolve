@@ -1,5 +1,7 @@
 model:
-  path: "models/model.gguf"
+  name: "Qwen2.5-Coder-3B-Instruct"
+  path: "models/qwen2.5-coder-3b-instruct-q4_k_m.gguf"
+  quantization: "Q4_K_M"
   context_size: 4096
   temperature: 0.2
   max_tokens: 256
