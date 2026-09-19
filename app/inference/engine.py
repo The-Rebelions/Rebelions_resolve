@@ -51,10 +51,15 @@ class InferenceEngine:
                 text=True,
                 check=True,
             )
+        except FileNotFoundError as error:
+            raise InferenceError(
+                "Inference executable was not found."
+            ) from error
+
         except subprocess.CalledProcessError as error:
             raise InferenceError(
                 f"Model inference failed with exit code {error.returncode}."
-            ) from error
+            ) from error        
 
         output = result.stdout
 
