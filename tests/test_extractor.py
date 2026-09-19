@@ -1,11 +1,11 @@
-from app.verification.code import CodeVerifier
+from app.verification.code import CodeVerifier, VerificationError
 from app.verification.extractor import CodeExtractor
 
 def main():
     text = """Here is the function:
 
     ```python
-    def add(a, b):
+    def broken(a, b):
     return a + b
     ```
 
@@ -19,8 +19,6 @@ def main():
 
     print("EXTRACTED CODE:")
     print(code)
-
     print("VERIFICATION:", verifier.verify_python_syntax(code))
-
 if __name__ == "__main__":
     main()
