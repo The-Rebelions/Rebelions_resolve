@@ -38,6 +38,8 @@ class InferenceEngine:
             "--temperature",
             str(self.temperature),
             "--single-turn",
+            "--simple-io",
+            "--no-display-prompt",
             "-p",
             prompt,
         ]
@@ -54,4 +56,12 @@ class InferenceEngine:
                 f"Model inference failed with exit code {error.returncode}."
             ) from error
 
-        return result.stdout
+        output = result.stdout
+
+        if prompt in output:
+            output = output.split(prompt, 1)[1]
+
+        if "[ Prompt:" in output:
+            output = output.split("[ Prompt:", 1)[0]
+
+        return output.strip()
