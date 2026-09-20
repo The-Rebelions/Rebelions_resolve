@@ -24,7 +24,7 @@ def main():
 
     prompt = input("You: ")
 
-    response = engine.generate(prompt)
+    response,performance = engine.generate(prompt)
 
     try:
         code = extractor.extract_python(response)
@@ -33,6 +33,15 @@ def main():
         print("\nAI:")
         print(code)
         print("\nVerification: PASSED")
+
+        if performance:
+                    print("\nPerformance:")
+                    print(
+                        f"Prompt: {performance['prompt_tokens_per_second']:.1f} t/s"
+                    )
+                    print(
+                        f"Generation: {performance['generation_tokens_per_second']:.1f} t/s"
+                    )
 
     except (CodeExtractionError, VerificationError) as error:
         print("\nAI:")

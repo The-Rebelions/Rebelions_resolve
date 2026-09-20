@@ -14,11 +14,15 @@ def main():
         gpu_layers=config["runtime"]["gpu_layers"],
     )
 
-    response = engine.generate(
+    response, performance = engine.generate(
         "Write a Python function that calculates the factorial of a number."
     )
 
+    print("RESPONSE:")
     print(response)
+
+    print("\nPERFORMANCE:")
+    print(performance)
 
 
 if __name__ == "__main__":

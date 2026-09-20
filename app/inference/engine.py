@@ -1,5 +1,6 @@
 from pathlib import Path
 import subprocess
+import re
 
 
 class InferenceError(Exception):
@@ -64,7 +65,7 @@ class InferenceEngine:
             if details:
                 message += f"\nDetails: {details}"
 
-            raise InferenceError(message) from error     
+            raise InferenceError(message) from error
 
         output = result.stdout
 
@@ -78,5 +79,16 @@ class InferenceEngine:
 
         if not output:
             raise InferenceError("Model returned an empty response.")
+        performance = None
 
-        return output
+        match = re.search(
+            r"\[ Prompt:\s*([\d.]+)\s*t/s \| Generation:\s*([\d.]+)\s*t/s \]",
+            result.stdout,
+        )
+
+        if match:
+            performance = {
+                "prompt_tokens_per_second": float(match.group(1)),
+                "generation_tokens_per_second": float(match.group(2)),
+            }
+        return output, performance
