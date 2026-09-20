@@ -1,6 +1,7 @@
 from pathlib import Path
 import subprocess
 import re
+from app.core.benchmark import PerformanceMetrics
 
 
 class InferenceError(Exception):
@@ -87,8 +88,8 @@ class InferenceEngine:
         )
 
         if match:
-            performance = {
-                "prompt_tokens_per_second": float(match.group(1)),
-                "generation_tokens_per_second": float(match.group(2)),
-            }
+            performance = PerformanceMetrics(
+                prompt_tokens_per_second=float(match.group(1)),
+                generation_tokens_per_second=float(match.group(2)),
+            )
         return output, performance

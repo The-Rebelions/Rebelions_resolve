@@ -37,10 +37,10 @@ def main():
         if performance:
                     print("\nPerformance:")
                     print(
-                        f"Prompt: {performance['prompt_tokens_per_second']:.1f} t/s"
+                        f"Prompt: {performance.prompt_tokens_per_second:.1f} t/s"
                     )
                     print(
-                        f"Generation: {performance['generation_tokens_per_second']:.1f} t/s"
+                        f"Generation: {performance.generation_tokens_per_second:.1f} t/s"
                     )
 
     except (CodeExtractionError, VerificationError) as error:

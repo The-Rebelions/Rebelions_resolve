@@ -1,6 +1,11 @@
 import re
 import time
+from dataclasses import dataclass
 
+@dataclass
+class PerformanceMetrics:
+    prompt_tokens_per_second: float
+    generation_tokens_per_second: float
 
 class BenchmarkError(Exception):
     """Raised when benchmark timing is used incorrectly."""
@@ -24,7 +29,7 @@ class BenchmarkTimer:
 
         return token_count / elapsed
 
-    def parse_llama_performance(self, output: str) -> dict:
+    def parse_llama_performance(self, output: str) -> PerformanceMetrics:
         match = re.search(
             r"\[ Prompt:\s*([\d.]+)\s*t/s \| Generation:\s*([\d.]+)\s*t/s \]",
             output,
@@ -35,7 +40,7 @@ class BenchmarkTimer:
                 "llama.cpp performance metrics were not found."
             )
 
-        return {
-            "prompt_tokens_per_second": float(match.group(1)),
-            "generation_tokens_per_second": float(match.group(2)),
-        }
+        return PerformanceMetrics(
+            prompt_tokens_per_second=float(match.group(1)),
+            generation_tokens_per_second=float(match.group(2)),
+        )
