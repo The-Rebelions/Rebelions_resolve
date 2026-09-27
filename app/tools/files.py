@@ -1,15 +1,20 @@
 from pathlib import Path
 
+from app.tools.permissions import PermissionPolicy
+
 
 class FileToolError(Exception):
     """Raised when a file tool operation fails."""
 
 
 class FileTool:
-    def __init__(self, project_root: str):
+    def __init__(self, project_root: str, permissions: PermissionPolicy):
         self.project_root = Path(project_root).resolve()
+        self.permissions = permissions
 
     def read_file(self, path: str) -> str:
+        self.permissions.check_file_read()
+
         file_path = (self.project_root / path).resolve()
 
         if not file_path.is_relative_to(self.project_root):
@@ -29,7 +34,6 @@ class FileTool:
             raise FileToolError(
                 "File is not valid UTF-8 text."
             ) from error
-
         except OSError as error:
             raise FileToolError(
                 f"Failed to read file: {error}"
