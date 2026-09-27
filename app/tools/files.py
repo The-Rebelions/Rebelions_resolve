@@ -1,4 +1,5 @@
 from pathlib import Path
+from app.tools.base import ToolMetadata
 
 from app.tools.permissions import PermissionPolicy
 
@@ -8,6 +9,13 @@ class FileToolError(Exception):
 
 
 class FileTool:
+    def metadata(self) -> ToolMetadata:
+        return ToolMetadata(
+            name="file",
+            description="Read and write files inside the project workspace.",
+            requires_permission="file_read,file_write"
+        )
+    
     def __init__(self, project_root: str, permissions: PermissionPolicy):
         self.project_root = Path(project_root).resolve()
         self.permissions = permissions
