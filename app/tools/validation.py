@@ -32,3 +32,9 @@ class ToolRequestValidator:
             raise ToolRequestValidationError(
                 f"Tool '{request.tool_name}' is not available."
             ) from error
+            
+        tool = self.registry.get(request.tool_name)
+        if request.action not in tool.supported_actions():
+            raise ToolRequestValidationError(
+                f"Action '{request.action}' is not supported by tool '{request.tool_name}'."
+            )

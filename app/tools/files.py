@@ -9,6 +9,8 @@ class FileToolError(Exception):
 
 
 class FileTool:
+    def supported_actions(self)-> set[str]:
+        return {"read","write"}
     def metadata(self) -> ToolMetadata:
         return ToolMetadata(
             name="file",
