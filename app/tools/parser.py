@@ -1,3 +1,4 @@
+import contextlib
 import json
 
 from app.tools.request import ToolRequest
@@ -9,6 +10,13 @@ class ToolRequestParseError(Exception):
 
 class ToolRequestParser:
     def parse(self, text: str) -> ToolRequest:
+        text = text.strip()
+
+        # Remove markdown code block markers if present
+        with contextlib.suppress(IndexError):
+            if text.startswith("```json") and text.endswith("```"):
+                text = text[7:-3].strip()
+
         try:
             data = json.loads(text)
         except json.JSONDecodeError as error:
@@ -31,3 +39,4 @@ class ToolRequestParser:
             raise ToolRequestParseError(
                 f"Missing required field: {error.args[0]}"
             ) from error
+    
