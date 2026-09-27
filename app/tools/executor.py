@@ -1,5 +1,6 @@
 from app.tools.request import ToolRequest
 from app.tools.registry import ToolRegistry
+from app.tools.validation import ToolRequestValidator
 
 
 class ToolExecutionError(Exception):
@@ -9,8 +10,11 @@ class ToolExecutionError(Exception):
 class ToolExecutor:
     def __init__(self, registry: ToolRegistry):
         self.registry = registry
+        self.validator = ToolRequestValidator(registry)
 
     def execute(self, request: ToolRequest):
+        self.validator.validate(request)
+
         tool = self.registry.get(request.tool_name)
 
         if request.action == "read":
