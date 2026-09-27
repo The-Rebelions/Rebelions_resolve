@@ -8,9 +8,16 @@ class PermissionError(Exception):
 @dataclass
 class PermissionPolicy:
     allow_file_read: bool = False
+    allow_file_write: bool = False
 
     def check_file_read(self) -> None:
         if not self.allow_file_read:
             raise PermissionError(
                 "File read operation is not permitted."
+            )
+
+    def check_file_write(self) -> None:
+        if not self.allow_file_write:
+            raise PermissionError(
+                "File write operation is not permitted."
             )

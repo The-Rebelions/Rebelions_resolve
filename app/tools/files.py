@@ -38,3 +38,23 @@ class FileTool:
             raise FileToolError(
                 f"Failed to read file: {error}"
             ) from error
+            
+    def write_file(self, path: str, content: str) -> None:
+        self.permissions.check_file_write()
+
+        file_path = (self.project_root / path).resolve()
+
+        if not file_path.is_relative_to(self.project_root):
+            raise FileToolError(
+                "Access denied: path is outside the project directory."
+            )
+
+        if file_path.exists() and not file_path.is_file():
+            raise FileToolError("Path is not a file.")
+
+        try:
+            file_path.write_text(content, encoding="utf-8")
+        except OSError as error:
+            raise FileToolError(
+                f"Failed to write file: {error}"
+            ) from error    
