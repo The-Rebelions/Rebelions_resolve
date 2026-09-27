@@ -3,6 +3,14 @@ class ToolRegistryError(Exception):
 
 
 class ToolRegistry:
+    def get_metadata(self,name:str):
+        tool=self.get(name)
+        if not hasattr(tool, "metadata"):
+            raise ToolRegistryError(
+                f"Tool '{name}' does not provide metadata() method."
+            )
+        return tool.metadata()
+        
     def __init__(self):
         self._tools = {}
 
