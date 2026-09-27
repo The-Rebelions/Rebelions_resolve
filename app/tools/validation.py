@@ -1,5 +1,5 @@
-import __main__
 from app.tools.request import ToolRequest
+from app.tools.registry import ToolRegistry
 
 
 class ToolRequestValidationError(Exception):
@@ -7,6 +7,9 @@ class ToolRequestValidationError(Exception):
 
 
 class ToolRequestValidator:
+    def __init__(self, registry: ToolRegistry):
+        self.registry = registry
+
     def validate(self, request: ToolRequest) -> None:
         if not request.tool_name.strip():
             raise ToolRequestValidationError(
@@ -22,3 +25,10 @@ class ToolRequestValidator:
             raise ToolRequestValidationError(
                 "Tool arguments must be a dictionary."
             )
+
+        try:
+            self.registry.get(request.tool_name)
+        except Exception as error:
+            raise ToolRequestValidationError(
+                f"Tool '{request.tool_name}' is not available."
+            ) from error
