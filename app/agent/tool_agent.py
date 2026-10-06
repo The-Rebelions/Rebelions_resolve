@@ -1,3 +1,4 @@
+
 from app.agent.prompt import ToolPromptBuilder
 from app.tools.executor import ToolExecutor
 from app.tools.parser import ToolRequestParser
@@ -19,3 +20,13 @@ class ToolAgent:
     def execute_model_output(self, text: str):
         request = self.parse_model_output(text)
         return self.executor.execute(request)
+    
+    def build_tool_result_prompt(
+        self,
+        user_request: str,
+        tool_result: str,
+    ) -> str:
+        return self.prompt_builder.build_tool_result_prompt(
+            user_request,
+            tool_result,
+        )
