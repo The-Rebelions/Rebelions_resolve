@@ -30,3 +30,18 @@ class ToolAgent:
             user_request,
             tool_result,
         )
+    
+    def run_tool_loop(
+        self,user_request:str,
+        model_output:str,
+        max_steps:int=3,
+    ):
+        results=[]
+        for _ in range(max_steps):
+            result=self.execute_model_output(model_output)
+            results.append(result)
+
+            return results
+        return results
+        
+        
