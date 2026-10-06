@@ -6,9 +6,10 @@ from app.tools.request import ToolRequest
 
 
 class ToolAgent:
-    def __init__(self, executor: ToolExecutor):
+    def __init__(self, executor: ToolExecutor,inference_engine):
         self.parser = ToolRequestParser()
         self.executor = executor
+        self.inference_engine=inference_engine
         self.prompt_builder = ToolPromptBuilder()
 
     def build_prompt(self, user_request: str) -> str:
@@ -43,5 +44,5 @@ class ToolAgent:
 
             return results
         return results
-        
+
         
