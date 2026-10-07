@@ -9,6 +9,7 @@ class PermissionError(Exception):
 class PermissionPolicy:
     allow_file_read: bool = False
     allow_file_write: bool = False
+    allow_shell_execution: bool = False
 
     def check_file_read(self) -> None:
         if not self.allow_file_read:
@@ -20,4 +21,10 @@ class PermissionPolicy:
         if not self.allow_file_write:
             raise PermissionError(
                 "File write operation is not permitted."
+            )
+
+    def check_shell_execution(self) -> None:
+        if not self.allow_shell_execution:
+            raise PermissionError(
+                "Shell execution is not permitted."
             )
