@@ -35,12 +35,21 @@ class ToolExecutor:
 
             if request.action == "write":
                 tool.write_file(**request.arguments)
-            return ToolResult(
-                tool_name=request.tool_name,
-                action=request.action,
-                success=True,
-                output="File written successfully.",
-            )
+                return ToolResult(
+                    tool_name=request.tool_name,
+                    action=request.action,
+                    success=True,
+                    output="File written successfully.",
+                )
+
+            if request.action == "execute":
+                result = tool.execute(**request.arguments)
+                return ToolResult(
+                    tool_name=request.tool_name,
+                    action=request.action,
+                    success=result["return_code"] == 0,
+                    output=result["stdout"] if result["return_code"] == 0 else (result["stderr"] or result["stdout"]),
+                )
 
             raise ToolExecutionError(
                 ToolError(

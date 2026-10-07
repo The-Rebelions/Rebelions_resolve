@@ -10,6 +10,9 @@ class ShellToolError(Exception):
 
 
 class ShellTool:
+    def supported_actions(self) -> set[str]:
+        return {"execute"}
+
     def __init__(self, project_root: str, permissions: PermissionPolicy):
         self.project_root = Path(project_root).resolve()
         self.permissions = permissions
