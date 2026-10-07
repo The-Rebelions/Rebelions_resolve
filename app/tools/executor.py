@@ -2,10 +2,15 @@ from app.tools.request import ToolRequest
 from app.tools.registry import ToolRegistry
 from app.tools.validation import ToolRequestValidator
 from app.tools.result import ToolResult
+from app.tools.errors import ToolError
+from app.tools.permissions import PermissionError
 
 
 class ToolExecutionError(Exception):
     """Raised when a tool request cannot be executed."""
+    def __init__(self,error: ToolError):
+        self.error = error
+        super().__init__(error.message)
 
 
 class ToolExecutor:
@@ -38,12 +43,25 @@ class ToolExecutor:
             )
 
             raise ToolExecutionError(
-                f"Action '{request.action}' cannot be executed."
+                ToolError(
+                    message=f"Action '{request.action}' cannot be executed.",
+                    recoverable=False,
+                )
             )
 
         except ToolExecutionError:
             raise
+        except PermissionError as error:
+            raise ToolExecutionError(
+                ToolError(
+                    message=f"Tool '{request.tool_name}' execution failed: {error}",
+                    recoverable=False,
+                )
+            ) from error
         except Exception as error:
             raise ToolExecutionError(
-                f"Tool '{request.tool_name}' execution failed: {error}"
+                ToolError(
+                    message=f"Tool '{request.tool_name}' execution failed: {error}",
+                    recoverable=True,
+                )
             ) from error
