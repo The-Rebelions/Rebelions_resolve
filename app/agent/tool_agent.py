@@ -1,6 +1,6 @@
 
 from app.agent.prompt import ToolPromptBuilder
-from app.tools.executor import ToolExecutor
+from app.tools.executor import ToolExecutor,ToolExecutionError
 from app.tools.parser import ToolRequestParser,ToolRequestParseError
 from app.tools.request import ToolRequest
 
@@ -49,6 +49,8 @@ class ToolAgent:
                 result = self.execute_model_output(current_output)
             except ToolRequestParseError as error:
                 return results, f"Tool request parsing failed: {error}"
+            except ToolExecutionError as error:
+                return results, f"Tool execution failed: {error}"
 
             results.append(result)
 
