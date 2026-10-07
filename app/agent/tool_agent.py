@@ -33,20 +33,39 @@ class ToolAgent:
         )
     
     def run_tool_loop(
-        self,user_request:str,
-        model_output:str,
-        max_steps:int=3,
+        self,
+        user_request: str,
+        model_output: str,
+        max_steps: int = 3,
     ):
-        results=[]
+        results = []
+        current_output = model_output
+
         for _ in range(max_steps):
-            result=self.execute_model_output(model_output)
+            result = self.execute_model_output(current_output)
             results.append(result)
 
-            return results
+            current_output = self.generate_next_action(
+                user_request,
+                result,
+            )
+
         return results
 
     def generate_model_output(self, prompt: str) -> str:
         response, _ = self.inference_engine.generate(prompt)
         return response
+
+    def generate_next_action(
+        self,
+        user_request: str,
+        tool_result,
+    ) -> str:
+        formatted_result = self.prompt_builder.build_tool_result_prompt(
+            user_request,
+            str(tool_result.output),
+        )
+
+        return self.generate_model_output(formatted_result)
 
         
