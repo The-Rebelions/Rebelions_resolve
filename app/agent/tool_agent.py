@@ -50,7 +50,16 @@ class ToolAgent:
             except ToolRequestParseError as error:
                 return results, f"Tool request parsing failed: {error}"
             except ToolExecutionError as error:
-                return results, f"Tool execution failed: {error}"
+                if error.error.recoverable:
+                    return results, (
+                        f"Tool execution failed, but the error is recoverable: "
+                        f"{error.error.message}"
+                    )
+
+                return results, (
+                    f"Tool execution failed and cannot be recovered: "
+                    f"{error.error.message}"
+                )
 
             results.append(result)
 
