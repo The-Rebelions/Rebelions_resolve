@@ -53,7 +53,7 @@ class ToolAgent:
                 result,
             )
 
-        return results
+        return results,current_output
 
     def generate_model_output(self, prompt: str) -> str:
         response, _ = self.inference_engine.generate(prompt)
