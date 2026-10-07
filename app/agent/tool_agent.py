@@ -45,4 +45,8 @@ class ToolAgent:
             return results
         return results
 
+    def generate_model_output(self, prompt: str) -> str:
+        response, _ = self.inference_engine.generate(prompt)
+        return response
+
         
