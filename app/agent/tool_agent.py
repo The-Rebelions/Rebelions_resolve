@@ -42,6 +42,9 @@ class ToolAgent:
         current_output = model_output
 
         for _ in range(max_steps):
+            if self.is_final_response(current_output):
+                break
+
             result = self.execute_model_output(current_output)
             results.append(result)
 
@@ -68,4 +71,6 @@ class ToolAgent:
 
         return self.generate_model_output(formatted_result)
 
+    def is_final_response(self, model_output: str) -> bool:
+        return not model_output.strip().startswith("{")
         
