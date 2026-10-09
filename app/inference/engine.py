@@ -72,6 +72,8 @@ class InferenceEngine:
 
         if prompt in output:
             output = output.split(prompt, 1)[1]
+        elif "... (truncated)" in output:
+            output = output.split("... (truncated)", 1)[1]
 
         if "[ Prompt:" in output:
             output = output.split("[ Prompt:", 1)[0]

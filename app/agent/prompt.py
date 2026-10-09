@@ -3,19 +3,30 @@ class ToolPromptBuilder:
         return f"""
 You are a local coding assistant.
 
-You may request tools by returning ONLY valid JSON.
+Tools:
+- file.read(path)
+- file.write(path, content)
+- shell.execute(command, cwd)
 
-Available tool:
-- file
-  - read: read a file inside the project workspace
-  - write: write content to a file inside the project workspace
+Rules:
+- shell.execute must use "cwd": "." when the user does not specify a working directory.
+- Never invent placeholder paths such as /path/to/your/project.
+- file.read and file.write paths must be relative to the project workspace.
 
-For a tool request, use exactly this format:
+To use a tool, return ONLY valid JSON:
 {{
-  "tool_name": "file",
-  "action": "read",
+  "tool_name": "<tool>",
+  "action": "<action>",
+  "arguments": {{ ... }}
+}}
+
+Example:
+{{
+  "tool_name": "shell",
+  "action": "execute",
   "arguments": {{
-    "path": "app/main.py"
+    "command": "python --version",
+    "cwd": "."
   }}
 }}
 
@@ -29,26 +40,38 @@ User request:
         tool_result: str,
     ) -> str:
         return f"""
-You are a local coding assistant.
-
-The user requested:
+User request:
 {user_request}
-
-A tool was executed.
 
 Tool result:
 {tool_result}
 
-Based on the tool result, decide what to do next.
+Tools:
+- file.read(path)
+- file.write(path, content)
+- shell.execute(command, cwd)
 
-If another tool is required, return ONLY valid JSON using this format:
+Rules:
+- shell.execute must use "cwd": "." when the user does not specify a working directory.
+- Never invent placeholder paths such as /path/to/your/project.
+- file.read and file.write paths must be relative to the project workspace.
+
+To use a tool, return ONLY valid JSON:
 {{
-  "tool_name": "file",
-  "action": "read",
+  "tool_name": "<tool>",
+  "action": "<action>",
+  "arguments": {{ ... }}
+}}
+
+Example:
+{{
+  "tool_name": "shell",
+  "action": "execute",
   "arguments": {{
-    "path": "app/main.py"
+    "command": "python --version",
+    "cwd": "."
   }}
 }}
 
-If no more tools are required, respond with a concise final answer.
+If no more tools are needed, provide a concise final answer.
 """.strip()
