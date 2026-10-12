@@ -4,15 +4,15 @@
 class CodebaseContextSelector:
     """Decide whether a user request is likely to require repository context.
 
-    The decision is entirely keyword/phrase-based — no LLM, no external
+    The decision is entirely keyword/phrase‑based — no LLM, no external
     dependencies, fully deterministic.
 
     Classification rules (evaluated in order):
-    1. Empty / whitespace-only  → **False**
+    1. Empty / whitespace‑only  → **False**
     2. Contains a *strong phrase* that explicitly references this codebase
        (e.g. "this project", "this function", "the repository") → **True**
     3. Contains a *strong keyword* that strongly implies working with
-       existing code (e.g. "bug", "error", "implementation") → **True**
+       existing code (e.g. "bug", "error", "implementation", "config") → **True**
     4. Everything else → **False** (treat as a general programming question)
     """
 
@@ -61,6 +61,9 @@ class CodebaseContextSelector:
         "repository",
         "repo",
         "existing",
+        "config",
+        "configuration",
+        "settings",
     )
 
     def needs_context(self, user_request: str) -> bool:
@@ -80,7 +83,7 @@ class CodebaseContextSelector:
             if phrase in lowered:
                 return True
 
-        # Tokenise to avoid substring false-positives (e.g. "error" inside
+        # Tokenise to avoid substring false‑positives (e.g. "error" inside
         # "decorators").  Keep only alphabetic tokens for simplicity.
         tokens = set(
             token.strip("?.,!;:'\"()")
