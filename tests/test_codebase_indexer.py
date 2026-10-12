@@ -56,3 +56,69 @@ def test_unreadable_file_is_skipped(tmp_path):
     results = idx.search('hello')
     assert len(results) == 1
     assert results[0].path == 'good.py'
+
+# ---------------------------------------------------------------------------
+# find_symbol() tests
+# ---------------------------------------------------------------------------
+
+def test_find_symbol_function(tmp_path):
+    """find_symbol returns the correct descriptor for a top-level function."""
+    create_file(
+        tmp_path / 'config.py',
+        'def load_config():\n    return {}\n',
+    )
+    idx = CodebaseIndexer(str(tmp_path), chunk_size=200)
+    idx.build()
+
+    results = idx.find_symbol('load_config')
+
+    assert len(results) == 1
+    sym = results[0]
+    assert sym['name'] == 'load_config'
+    assert sym['type'] == 'function'
+    assert sym['file_path'] == 'config.py'
+    assert sym['line_number'] == 1
+
+
+def test_find_symbol_unknown_returns_empty(tmp_path):
+    """find_symbol returns [] when the symbol does not exist."""
+    create_file(tmp_path / 'mod.py', 'x = 1\n')
+    idx = CodebaseIndexer(str(tmp_path), chunk_size=200)
+    idx.build()
+
+    assert idx.find_symbol('does_not_exist') == []
+
+
+def test_find_symbol_class_method(tmp_path):
+    """find_symbol can locate a method nested inside a class."""
+    src = (
+        'class MyService:\n'
+        '    def process(self):\n'
+        '        pass\n'
+    )
+    create_file(tmp_path / 'service.py', src)
+    idx = CodebaseIndexer(str(tmp_path), chunk_size=200)
+    idx.build()
+
+    # Class is findable.
+    classes = idx.find_symbol('MyService')
+    assert len(classes) == 1
+    assert classes[0]['type'] == 'class'
+
+    # Method is findable.
+    methods = idx.find_symbol('process')
+    assert len(methods) == 1
+    assert methods[0]['type'] == 'method'
+    assert methods[0]['file_path'] == 'service.py'
+
+
+def test_keyword_search_still_works_after_symbol_integration(tmp_path):
+    """Existing search() behaviour is unchanged after adding symbol extraction."""
+    create_file(tmp_path / 'utils.py', 'def helper():\n    return 42\n')
+    idx = CodebaseIndexer(str(tmp_path), chunk_size=200)
+    idx.build()
+
+    results = idx.search('helper')
+    assert len(results) >= 1
+    assert any(r.path == 'utils.py' for r in results)
+
