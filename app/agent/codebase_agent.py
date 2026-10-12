@@ -1,4 +1,5 @@
-﻿from app.agent.codebase_context import CodebaseContextProvider
+from app.agent.codebase_context import CodebaseContextProvider
+from app.agent.context_selector import CodebaseContextSelector
 
 
 class CodebaseAgent:
@@ -30,9 +31,15 @@ class CodebaseAgent:
         "Answer the user directly. Do not output tool JSON."
     )
 
-    def __init__(self, context_provider: CodebaseContextProvider, inference_engine):
+    def __init__(
+        self,
+        context_provider: CodebaseContextProvider,
+        inference_engine,
+        selector: CodebaseContextSelector | None = None,
+    ):
         self._context_provider = context_provider
         self._engine = inference_engine
+        self.selector = selector if selector is not None else CodebaseContextSelector()
 
     def answer(self, user_request: str, top_k: int = 5) -> str:
         """Retrieve relevant context and generate an answer for *user_request*.
@@ -49,7 +56,10 @@ class CodebaseAgent:
         str
             The model''s answer text.
         """
-        context = self._context_provider.get_context(user_request, top_k=top_k)
+        if self.selector.needs_context(user_request):
+            context = self._context_provider.get_context(user_request, top_k=top_k)
+        else:
+            context = ""
 
         if context:
             prompt = self.PROMPT_TEMPLATE.format(
