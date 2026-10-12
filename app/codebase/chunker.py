@@ -39,9 +39,12 @@ class CodeChunker:
 
         while i < length:
             end = i + self.chunk_size
-            chunks.append(text[i:end])
+            chunk_text = text[i:end]
+            if not chunk_text:
+                break
+            chunks.append(chunk_text)
 
-            # The current chunk already contains the end of the text.
+            # If this chunk reaches or exceeds the text length, we're done.
             if end >= length:
                 break
 
